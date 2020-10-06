@@ -15,6 +15,7 @@ class StudentRecognitioner:
     def _get_known_pictures(self, path):
 
         known = []
+        self.path = path
         
         for dirs, folders, files in os.walk(path):
             for file in files:
@@ -23,8 +24,11 @@ class StudentRecognitioner:
 
         for i in range(len(known)):
             known[i] = known[i].replace("\\","/")
-
-        return known
+        
+        if known: 
+            return known
+        else:
+            raise ImportError("No pictures found!")
 
 
     def _get_known_encodings(self, known_pictures):
@@ -36,7 +40,10 @@ class StudentRecognitioner:
             known_encoding = fr.face_encodings(known_image)[0]
             relations.update({pic.replace(".jpg","").replace(".png","") : known_encoding})
 
-        return relations
+        if relations: 
+            return relations
+        else:
+            raise ValueError("No faces found in pictures!")
 
     
     def find_by_picture(self, picture, ShowResult=True):
@@ -55,7 +62,7 @@ class StudentRecognitioner:
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 
-                name = list(self.known_encodings.keys())[best_match_index].replace(path+"/", "")
+                name = list(self.known_encodings.keys())[best_match_index].replace(self.path+"/", "")
                 # name = relations(best_match_index)
 
             face_names.append(name)
@@ -109,7 +116,7 @@ class StudentRecognitioner:
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 
-                name = list(self.known_encodings.keys())[best_match_index].replace(path+"/", "")
+                name = list(self.known_encodings.keys())[best_match_index].replace(self.path+"/", "")
                 # name = relations(best_match_index)
 
             face_names.append(name)
@@ -117,6 +124,8 @@ class StudentRecognitioner:
         if ShowResult:
 
             img = cv2.imread("screenshot.png")
+
+            max_top, max_right, max_bottom, max_left = None, None, None, None
 
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 # Draw a box around the face
@@ -127,13 +136,30 @@ class StudentRecognitioner:
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(img, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
-            
+                if not max_top or top < max_top:
+                    print(1)
+                    max_top = top
+                if not max_right or right > max_right:
+                    print(2)
+                    max_right = right
+                if not max_bottom or bottom > max_bottom:
+                    print(3)
+                    max_bottom = bottom
+                if not max_left or left < max_left:
+                    print(4)
+                    max_left = left
+
+            img = img[(max_top-200):(max_bottom+200), (max_left-200):(max_right+200)]
+
             cv2.imshow('Face Recognition', img)
             cv2.waitKey(0) # waits until a key is pressed
             cv2.destroyAllWindows()
 
         os.remove("screenshot.png")
         return face_names
+
+        def set_path(path):
+            self.__init__(path)
 
 
 path = "known_pictures"

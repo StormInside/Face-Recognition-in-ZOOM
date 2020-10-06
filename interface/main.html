@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Face Recognition</title>
+
+    <script src="eel.js"></script>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Face Recognition</h1>
+        </div>
+        <div class="message">
+            <h4>Please chose option</h4>
+        </div>
+        <div class="buttons">
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-5">
+                    <div class="input-group mb-3">
+                        <input type="text" id="photo_input" class="form-control" placeholder="File Path" aria-label="File Path" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="find_by_photo()">Find By Picture</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-5">
+                    <div class="input-group mb-3">
+                        <input type="number" id="screenshot_delay" class="form-control" placeholder="Delay Before Screenshot" aria-label="Delay Before Screenshot" aria-describedby="button-addon2">
+                        <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon2"  onclick="find_by_screenshot()">Find By Screenshot</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col col-lg-5">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                        <span class="input-group-text" id="basic-addon1">Folder</span>
+                        </div>
+                        <input id="folder_input" type="text" class="form-control" placeholder="Path To Known Photos" aria-label="Path To Known Photos" aria-describedby="basic-addon1" value="known_pictures" onchange="initialize()">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-5">
+                <div class="result" id="result"></div>
+            </div>
+        </div>
+        <div class="row justify-content-md-center">
+            <div class="col col-lg-5">
+                <div class="output" id="output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function initialize(){
+            console.log("init")
+            res_place = document.getElementById('result')
+            res_place.innerHTML = ""
+            let folder = document.getElementById('folder_input').value;
+            let res = await eel.set_known_folder(folder)();
+            res_place.innerHTML = res
+        }
+        initialize()
+
+        async function find_by_photo(){
+            console.log("find_by_photo")
+            res_place = document.getElementById('output')
+            res_place.innerHTML = ""
+            let picture = document.getElementById('photo_input').value;
+            let res = await eel.find_by_picture(picture)();
+            res_place.innerHTML = res
+        }
+        async function find_by_screenshot(){
+            console.log("find_by_screenshot")
+            res_place = document.getElementById('output')
+            res_place.innerHTML = "Waiting for delay..."
+            let delay = document.getElementById('screenshot_delay').value;
+            let res = await eel.find_by_screenshot(delay)();
+            res_place.innerHTML = res
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+</html>

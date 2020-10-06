@@ -1,0 +1,44 @@
+body{
+    /* display: flex; */
+    /* justify-content: center; */
+    /* background-color: rgb(102, 102, 102);
+    color: rgb(230, 227, 227); */
+    
+}
+.header{
+    margin-top: 20px;
+    text-align: center;
+}
+.message{
+    margin-top: 20px;
+    text-align: center;
+    color: rgb(109, 109, 109);
+}
+.buttons{
+    margin-top: 30px;
+    text-align: center;
+}
+.btn2{
+    margin-top: 40px;
+}
+.input-group{
+    min-width: 510px;
+}
+.known_path{
+    margin-top: 20px;
+}
+
+.settings{
+    margin-top: 50px;
+    border: 0.5px solid white;
+    height: 400px;
+}
+.result{
+    color: rgb(67, 196, 78);
+    text-align: center;
+}
+.output{
+    margin-top: 20px;
+    color: rgb(161, 161, 161);
+    text-align: center;
+}
