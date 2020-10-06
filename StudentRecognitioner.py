@@ -106,6 +106,7 @@ class StudentRecognitioner:
         face_locations = fr.face_locations(unknown_image)
         face_encodings = fr.face_encodings(unknown_image, face_locations)
         face_names = []
+        picture = False
 
         for face_encoding in face_encodings:
             
@@ -125,6 +126,9 @@ class StudentRecognitioner:
 
             img = cv2.imread("screenshot.png")
 
+            desired_width  = 600
+            # desired_high = int(desired_width * (3/4))
+
             max_top, max_right, max_bottom, max_left = None, None, None, None
 
             for (top, right, bottom, left), name in zip(face_locations, face_names):
@@ -135,33 +139,42 @@ class StudentRecognitioner:
                 cv2.rectangle(img, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
                 cv2.putText(img, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
+                
                 if not max_top or top < max_top:
-                    print(1)
                     max_top = top
                 if not max_right or right > max_right:
-                    print(2)
                     max_right = right
                 if not max_bottom or bottom > max_bottom:
-                    print(3)
                     max_bottom = bottom
                 if not max_left or left < max_left:
-                    print(4)
                     max_left = left
+            
+            if face_names:
+                if max_top <= 200:
+                    max_top = 210
+                if max_left <= 200:
+                    max_left = 210
+                # print(f"{max_top}, {max_right}, {max_bottom}, { max_left}")
+                img = img[(max_top-200):(max_bottom+200), (max_left-200):(max_right+200)]
 
-            img = img[(max_top-200):(max_bottom+200), (max_left-200):(max_right+200)]
+                # img = cv2.resize(img, (0, 0), fx=desired_width/(max_right-max_left), fy=desired_width/(max_right-max_left))
 
-            cv2.imshow('Face Recognition', img)
-            cv2.waitKey(0) # waits until a key is pressed
-            cv2.destroyAllWindows()
+            cv2.imwrite("interface/temp.png", img)
+            picture = True
+            # cv2.imshow('Face Recognition', img)
+            # cv2.waitKey(0) # waits until a key is pressed
+            # cv2.destroyAllWindows()
 
         os.remove("screenshot.png")
-        return face_names
+        if picture:
+            return face_names, picture
+        else: 
+            return face_names, None
 
         def set_path(path):
             self.__init__(path)
 
 
-path = "known_pictures"
-sr = StudentRecognitioner(path)
-print(sr.find_by_screenshot())
+# path = "known_pictures"
+# sr = StudentRecognitioner(path)
+# print(sr.find_by_screenshot())

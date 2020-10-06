@@ -59,15 +59,21 @@
                 <div class="output" id="output"></div>
             </div>
         </div>
+        
+    </div>
+    <div class="justify-content-md-center">
+        <p class="picture"><img id="picture" src="" alt="" width="600"></p>
     </div>
 
     <script>
         async function initialize(){
             console.log("init")
             res_place = document.getElementById('result')
-            res_place.innerHTML = ""
+            res_place.setAttribute("style", "color: rgb(109, 109, 109);");
+            res_place.innerHTML = "Waiting for initializing..."
             let folder = document.getElementById('folder_input').value;
             let res = await eel.set_known_folder(folder)();
+            res_place.setAttribute("style", "color: rgb(67, 196, 78);");
             res_place.innerHTML = res
         }
         initialize()
@@ -83,10 +89,19 @@
         async function find_by_screenshot(){
             console.log("find_by_screenshot")
             res_place = document.getElementById('output')
+            pic = document.getElementById('picture')
+            pic.src = ""
             res_place.innerHTML = "Waiting for delay..."
             let delay = document.getElementById('screenshot_delay').value;
+            console.log(delay)
             let res = await eel.find_by_screenshot(delay)();
-            res_place.innerHTML = res
+            
+            if (res[0].length > 0)
+                res_place.innerHTML = res[0]
+            else
+                res_place.innerHTML = "No Matches Found"
+            if (res[1])
+                pic.src = "temp.png"
         }
     </script>
 

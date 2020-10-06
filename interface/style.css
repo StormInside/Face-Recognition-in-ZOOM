@@ -42,3 +42,9 @@ body{
     color: rgb(161, 161, 161);
     text-align: center;
 }
+.picture{
+    padding: 0;
+    margin: 0;
+    margin-top: 5px;
+    text-align: center;
+}
