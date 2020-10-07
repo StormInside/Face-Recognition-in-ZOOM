@@ -22,10 +22,12 @@ def set_known_folder(folder):
 def find_by_picture(picture_location):
     if picture_location:
         try:
+            if os.path.exists("interface/temp.png"):
+                os.remove("interface/temp.png")
             global sr
             if sr:
-                res = sr.find_by_picture(picture_location)
-                return res
+                res, picture = sr.find_by_picture(picture_location)
+                return [res, picture]
             else:
                 return "Error finding -- Initialize known photos first"
         except Exception as ex:

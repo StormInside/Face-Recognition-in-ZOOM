@@ -68,23 +68,51 @@ class StudentRecognitioner:
             face_names.append(name)
 
         if ShowResult:
-            display = cv2.imread(picture)
+            img = cv2.imread(picture)
+
+            desired_width  = 600
+            # desired_high = int(desired_width * (3/4))
+
+            max_top, max_right, max_bottom, max_left = None, None, None, None
 
             for (top, right, bottom, left), name in zip(face_locations, face_names):
                 # Draw a box around the face
-                cv2.rectangle(display, (left, top), (right, bottom), (0, 0, 255), 2)
+                cv2.rectangle(img, (left, top), (right, bottom), (0, 0, 255), 2)
 
                 # Draw a label with a name below the face
-                cv2.rectangle(display, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+                cv2.rectangle(img, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
                 font = cv2.FONT_HERSHEY_DUPLEX
-                cv2.putText(display, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
+                cv2.putText(img, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+                
+                if not max_top or top < max_top:
+                    max_top = top
+                if not max_right or right > max_right:
+                    max_right = right
+                if not max_bottom or bottom > max_bottom:
+                    max_bottom = bottom
+                if not max_left or left < max_left:
+                    max_left = left
             
-            cv2.imshow('Face Recognition', display)
-            cv2.waitKey(0) # waits until a key is pressed
-            cv2.destroyAllWindows()
+            if face_names:
+                if max_top <= 200:
+                    max_top = 210
+                if max_left <= 200:
+                    max_left = 210
+                # print(f"{max_top}, {max_right}, {max_bottom}, { max_left}")
+                img = img[(max_top-200):(max_bottom+200), (max_left-200):(max_right+200)]
 
-        return face_names
+                # img = cv2.resize(img, (0, 0), fx=desired_width/(max_right-max_left), fy=desired_width/(max_right-max_left))
+                picture = True
+                cv2.imwrite("interface/temp.png", img)
+            
+            # cv2.imshow('Face Recognition', img)
+            # cv2.waitKey(0) # waits until a key is pressed
+            # cv2.destroyAllWindows()
+
+        if picture:
+            return face_names, picture
+        else: 
+            return face_names, None
 
 
 
@@ -158,14 +186,14 @@ class StudentRecognitioner:
                 img = img[(max_top-200):(max_bottom+200), (max_left-200):(max_right+200)]
 
                 # img = cv2.resize(img, (0, 0), fx=desired_width/(max_right-max_left), fy=desired_width/(max_right-max_left))
-
-            cv2.imwrite("interface/temp.png", img)
-            picture = True
+                cv2.imwrite("interface/temp.png", img)
+                picture = True
             # cv2.imshow('Face Recognition', img)
             # cv2.waitKey(0) # waits until a key is pressed
             # cv2.destroyAllWindows()
 
-        os.remove("screenshot.png")
+        if os.path.exists("screenshot.png"):
+            os.remove("screenshot.png")
         if picture:
             return face_names, picture
         else: 
@@ -175,6 +203,6 @@ class StudentRecognitioner:
             self.__init__(path)
 
 
-# path = "known_pictures"
-# sr = StudentRecognitioner(path)
-# print(sr.find_by_screenshot())
+path = "known_pictures"
+sr = StudentRecognitioner(path)
+print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))
