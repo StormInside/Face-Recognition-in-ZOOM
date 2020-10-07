@@ -203,6 +203,6 @@ class StudentRecognitioner:
             self.__init__(path)
 
 
-path = "known_pictures"
-sr = StudentRecognitioner(path)
-print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))
+# path = "known_pictures"
+# sr = StudentRecognitioner(path)
+# print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))

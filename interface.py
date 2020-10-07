@@ -29,12 +29,13 @@ def find_by_picture(picture_location):
                 res, picture = sr.find_by_picture(picture_location)
                 return [res, picture]
             else:
-                return "Error finding -- Initialize known photos first"
+                return ["Error finding -- Initialize known photos first", None]
         except Exception as ex:
-            return f"Error finding -- {ex}"
+            return [f"Error finding -- {ex}", None]
 
     else:
-        return "Error finding -- No picture"
+        print("ex")
+        return ["Error finding -- No picture", None]
 
 @eel.expose
 def find_by_screenshot(delay):
@@ -51,9 +52,9 @@ def find_by_screenshot(delay):
                 res, picture = sr.find_by_screenshot()
             return [res, picture]
         else:
-            return "Error finding -- Initialize known photos first"
+            return ["Error finding -- Initialize known photos first", None]
     except Exception as ex:
-        return f"Error finding -- {ex}"
+        return [f"Error finding -- {ex}", None]
 
 
 
