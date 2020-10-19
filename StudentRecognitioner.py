@@ -49,11 +49,8 @@ def _take_screenshot(delay, save=False):
     return my_screenshot
 
 
-def show_result(face_locations, face_names):
-    img = cv2.imread("screenshot.png")
-
-    desired_width = 600
-    # desired_high = int(desired_width * (3/4))
+def show_result(face_locations, face_names, source_pic="screenshot.png"):
+    img = cv2.imread(source_pic)
 
     max_top, max_right, max_bottom, max_left = None, None, None, None
 
@@ -102,7 +99,7 @@ class StudentRecognitioner:
     def set_path(self, path):
         self.__init__(path)
 
-    def _match_encodings(self, face_encodings):
+    def _best_match(self, face_encodings):
         face_names = []
         for face_encoding in face_encodings:
 
@@ -113,6 +110,7 @@ class StudentRecognitioner:
             # print(self.known_encodings)
             # print(face_distances)
             best_match_index = np.argmin(face_distances)
+
             if matches[best_match_index]:
                 name = list(self.known_encodings.keys())[best_match_index]
                 # name = relations(best_match_index)
@@ -122,16 +120,46 @@ class StudentRecognitioner:
 
         return face_names
 
-    def find_by_picture(self, picture, ShowResult=True):
+    def _top_n_match(self, face_encodings, length=10):
+        face_names_distance_pairs = []
+        for face_encoding in face_encodings:
+
+            name = "Unknown"
+            matches = fr.compare_faces(list(self.known_encodings.values()), face_encoding)
+
+            face_distances = fr.face_distance(list(self.known_encodings.values()), face_encoding)
+            # print(self.known_encodings)
+            # print(face_distances)
+            best_match_index = int(np.argmin(face_distances))
+
+            known_encodings_address = list(self.known_encodings.keys())
+            best_match_index_list = face_distances.tolist()
+            address_distances_pairs = list(zip(best_match_index_list, known_encodings_address))
+            cut_address_distances_pairs = sorted(address_distances_pairs, key=lambda pair: pair[0])[:length]
+
+            if matches[best_match_index]:
+                name = list(self.known_encodings.keys())[best_match_index]
+                # name = relations(best_match_index)
+                name = name.replace(self.path + "/", "")
+
+            face_names_distance_pairs.append((name, cut_address_distances_pairs))
+
+        return face_names_distance_pairs
+
+    def find_by_picture(self, picture, top=None ,ShowResult=True):
 
         unknown_image = fr.load_image_file(picture)
         face_locations = fr.face_locations(unknown_image)
         face_encodings = fr.face_encodings(unknown_image, face_locations)
 
-        face_names = self._match_encodings(face_encodings)
+        if top:
+            print(self._top_n_match(face_encodings))
+            face_names = ["Place_Holder"]
+        else:
+            face_names = self._best_match(face_encodings)
 
         if ShowResult:
-            show_result(face_locations, face_names)
+            show_result(face_locations, face_names, source_pic=picture)
 
         if picture:
             return face_names, picture
@@ -149,7 +177,7 @@ class StudentRecognitioner:
         face_names = []
         picture = False
 
-        face_names = self._match_encodings(face_encodings)
+        face_names = self._best_match(face_encodings)
 
         if ShowResult:
             show_result(face_locations, face_names)
@@ -165,7 +193,7 @@ class StudentRecognitioner:
 def main():
     path = "known_pictures"
     sr = StudentRecognitioner(path)
-    print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))
+    print(sr.find_by_picture("test_pictures/44_A_1.jpg",top=5))
 
 
 if __name__ == "__main__":
