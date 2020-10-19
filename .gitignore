@@ -1,4 +1,8 @@
-__pycache__
+# do not commit data 
 known_pictures
 test_pictures
+# do not commit temporary files
+__pycache__
 interface/temp.png
+# do not commit editor settings
+.idea
