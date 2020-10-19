@@ -9,7 +9,8 @@ class StudentRecognitioner:
 
     def __init__(self, known_pictures_location):
 
-        self.known_encodings =  self._get_known_encodings(self._get_known_pictures(known_pictures_location))
+        known_pictures = self._get_known_pictures(known_pictures_location)
+        self.known_encodings =  self._get_known_encodings()
 
 
     def _get_known_pictures(self, path):
@@ -37,6 +38,8 @@ class StudentRecognitioner:
 
         for pic in known_pictures:
             known_image = fr.load_image_file(pic)
+            face_encodings = fr.face_encodings(known_image)
+            print(face_encodings)
             known_encoding = fr.face_encodings(known_image)[0]
             relations.update({pic.replace(".jpg","").replace(".png","") : known_encoding})
 
@@ -59,6 +62,8 @@ class StudentRecognitioner:
             matches = fr.compare_faces(list(self.known_encodings.values()), face_encoding)
 
             face_distances = fr.face_distance(list(self.known_encodings.values()), face_encoding)
+            print(self.known_encodings)
+            print(face_distances)
             best_match_index = np.argmin(face_distances)
             if matches[best_match_index]:
                 
@@ -203,6 +208,6 @@ class StudentRecognitioner:
             self.__init__(path)
 
 
-# path = "known_pictures"
-# sr = StudentRecognitioner(path)
+path = "known_pictures"
+sr = StudentRecognitioner(path)
 # print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))

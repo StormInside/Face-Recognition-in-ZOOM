@@ -34,7 +34,6 @@ def find_by_picture(picture_location):
             return [f"Error finding -- {ex}", None]
 
     else:
-        print("ex")
         return ["Error finding -- No picture", None]
 
 @eel.expose
