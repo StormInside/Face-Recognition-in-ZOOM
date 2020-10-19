@@ -207,7 +207,10 @@ class StudentRecognitioner:
         def set_path(path):
             self.__init__(path)
 
+def main():
+    path = "known_pictures"
+    sr = StudentRecognitioner(path)
+    print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))
 
-path = "known_pictures"
-sr = StudentRecognitioner(path)
-# print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))
+if __name__ == "__main__":
+    main()
