@@ -73,7 +73,12 @@
             res_place.innerHTML = "Waiting for initializing..."
             let folder = document.getElementById('folder_input').value;
             let res = await eel.set_known_folder(folder)();
-            res_place.setAttribute("style", "color: rgb(67, 196, 78);");
+            if (res == "Success initializing"){
+                res_place.setAttribute("style", "color: rgb(67, 196, 78);");
+            }
+            else{
+                res_place.setAttribute("style", "color: rgb(109, 109, 109);");
+            }
             res_place.innerHTML = res
         }
         
@@ -104,6 +109,7 @@
             res_place.innerHTML = "Waiting for delay..."
             let delay = document.getElementById('screenshot_delay').value;
             let res = await eel.find_by_screenshot(delay)();
+            console.log(res)
             res_place.setAttribute("style", "color: rgb(32, 32, 32);");
             if (res[0].length > 0)
                 res_place.innerHTML = res[0]

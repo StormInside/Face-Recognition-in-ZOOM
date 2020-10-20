@@ -50,6 +50,7 @@ def _take_screenshot(delay, save=False):
 
 
 def show_result(face_locations, face_names, source_pic="screenshot.png", draw_found_pics_path=None):
+
     img = cv2.imread(source_pic)
 
     max_top, max_right, max_bottom, max_left = None, None, None, None
@@ -64,7 +65,7 @@ def show_result(face_locations, face_names, source_pic="screenshot.png", draw_fo
         name_tmp = name.replace(".jpg", "").replace(".png", "")
         cv2.putText(img, name_tmp, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
-        if draw_found_pics_path and len(face_names) == 1:
+        if draw_found_pics_path and len(face_names) == 1 and face_names[0] != 'Unknown':
             found_pic_path = draw_found_pics_path + "/" + name
             found_img_fr = fr.load_image_file(found_pic_path)
             f_top, f_right, f_bottom, f_left = fr.face_locations(found_img_fr)[0]
@@ -168,62 +169,65 @@ class StudentRecognitioner:
 
         return face_names_distance_pairs
 
-    def find_by_picture(self, picture, top=None, ShowResult=True):
+    def find_by_picture(self, picture, ShowResult=True):
 
         unknown_image = fr.load_image_file(picture)
         face_locations = fr.face_locations(unknown_image)
-        face_encodings = fr.face_encodings(unknown_image, face_locations)
 
-        if top:
-            face_names_distance_pairs = self._top_n_match(face_encodings, top)
+        if face_locations:
+            face_encodings = fr.face_encodings(unknown_image, face_locations)
+
+            face_names_distance_pairs = self._top_n_match(face_encodings)
             print(face_names_distance_pairs)
             face_names = [pair[0] for pair in face_names_distance_pairs]
+
+            if ShowResult:
+                show_result(face_locations, face_names, source_pic=picture, draw_found_pics_path=self.path)
+
+            for i in range(len(face_names)):
+                face_names[i] = face_names[i].replace(".jpg", "").replace(".png", "")
+
+            return face_names, True
         else:
-            face_names = self._best_match(face_encodings)
+            return ["No Faces found on picture"], None
 
-        if ShowResult:
-            show_result(face_locations, face_names, source_pic=picture, draw_found_pics_path=self.path)
+    def find_by_screenshot(self, screnshot_delay=2, ShowResult=True):
 
-        for i in range(len(face_names)):
-            face_names[i] = face_names[i].replace(".jpg", "").replace(".png", "")
-
-        if picture:
-            return face_names, picture
-        else:
-            return face_names, None
-
-    def find_by_screenshot(self, screnshot_delay=2, top=None, ShowResult=True):
         if ShowResult:
             screenshot = _take_screenshot(screnshot_delay, save=True)
         else:
             screenshot = _take_screenshot(screnshot_delay)
+
         unknown_image = np.array(screenshot)
         face_locations = fr.face_locations(unknown_image)
-        face_encodings = fr.face_encodings(unknown_image, face_locations)
-        face_names = []
-        picture = False
 
-        face_names = self._best_match(face_encodings)
+        if face_locations:
 
-        if ShowResult:
-            show_result(face_locations, face_names)
+            face_encodings = fr.face_encodings(unknown_image, face_locations)
 
-        if os.path.exists("screenshot.png"):
-            os.remove("screenshot.png")
+            face_names_distance_pairs = self._top_n_match(face_encodings)
+            print(face_names_distance_pairs)
+            face_names = [pair[0] for pair in face_names_distance_pairs]
 
-        for i in range(len(face_names)):
-            face_names[i] = face_names[i].replace(".jpg", "").replace(".png", "")
+            if ShowResult:
+                show_result(face_locations, face_names, draw_found_pics_path=self.path)
 
-        if picture:
-            return face_names, picture
+            if os.path.exists("screenshot.png"):
+                os.remove("screenshot.png")
+
+            for i in range(len(face_names)):
+                face_names[i] = face_names[i].replace(".jpg", "").replace(".png", "")
+
+            return face_names, True
+
         else:
-            return face_names, None
+            return ["No Faces found on screenshot"], None
 
 
 def main():
     path = "known_pictures"
     sr = StudentRecognitioner(path)
-    print(sr.find_by_picture("test_pictures/44_A_1.jpg", top=5))
+    print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg", top=5))
 
 
 if __name__ == "__main__":
