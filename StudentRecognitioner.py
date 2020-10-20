@@ -75,13 +75,27 @@ def show_result(face_locations, face_names, source_pic="screenshot.png", draw_fo
             # height, width = found_img.shape
             cv2.rectangle(found_img, (0, 0), (found_img.shape[1], found_img.shape[0]), (0, 255, 0), 2)
             top_offset_for_center =int(((bottom-top) - found_img.shape[0]) // 2)
-            img[top + top_offset_for_center: top + top_offset_for_center + found_img.shape[0],
-            right + 50:right + 50 + found_img.shape[1]] = found_img
 
-            top = min(top, top + top_offset_for_center)
-            # left unchanged
-            bottom = max(bottom, top + top_offset_for_center + found_img.shape[0])
-            right = max(right, right + 50 + found_img.shape[1])
+            try:
+                if img.shape[1] > right + 50 + found_img.shape[1]:
+                    img[top + top_offset_for_center: top + top_offset_for_center + found_img.shape[0],
+                                            right + 50:right + 50 + found_img.shape[1]] = found_img
+                else:
+                    n = np.full((img.shape[0], right + 100 + found_img.shape[1]-img.shape[1], 3), 50, dtype = "uint8")
+
+                    img = np.append(img, n, axis=1)
+
+                    img[top + top_offset_for_center: top + top_offset_for_center + found_img.shape[0],
+                                            right + 50:right + 50 + found_img.shape[1]] = found_img
+                    
+                top = min(top, top + top_offset_for_center)
+                # left unchanged
+                bottom = max(bottom, top + top_offset_for_center + found_img.shape[0])
+                right = max(right, right + 50 + found_img.shape[1])
+
+            except ValueError:
+                print("Ne Vlezlo")
+                
 
         if not max_top or top < max_top:
             max_top = top
@@ -227,7 +241,7 @@ class StudentRecognitioner:
 def main():
     path = "known_pictures"
     sr = StudentRecognitioner(path)
-    print(sr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg", top=5))
+    print(sr.find_by_picture("known_pictures\master.jpg"))
 
 
 if __name__ == "__main__":
