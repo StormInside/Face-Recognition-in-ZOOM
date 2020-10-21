@@ -1,12 +1,12 @@
 # Simple-Face-Recognition-Program
 KNU MIT Group 1
 
-To run with interface 'Start_interface.py' file.
+To run with interface run 'Start_interface.py' file.
 
-This program can fing faces on photos and conpare them to known.
+This program can find faces on photos and compare them to known.
 
 CREATING KNOWN FOLDER
 
-Just put all photos with names in some folder (transition folders are supported) and set path to this folder in Folder line.
+Just put all photos with names in some folder, default is ./known_pictures (photos from subfolders are also read) and set path to this folder in Folder line.
 
-Or if you dont like interface initialise FaceRecogniser with folder path.
+Or if you don't like interface create FaceRecogniser object specifying folder path.
