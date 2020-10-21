@@ -123,7 +123,7 @@ def show_result(face_locations, face_names, source_pic="screenshot.png", draw_fo
         cv2.imwrite("interface/temp.png", img)
 
 
-class StudentRecognitioner:
+class FaceRecogniser:
 
     def __init__(self, known_pictures_dir_location):
 
@@ -240,8 +240,8 @@ class StudentRecognitioner:
 
 def main():
     path = "known_pictures"
-    sr = StudentRecognitioner(path)
-    print(sr.find_by_picture("known_pictures\master.jpg"))
+    fr = FaceRecogniser(path)
+    print(fr.find_by_picture("Ronnie_Radke_June_2015_outtake.jpg"))
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import eel
 import os
-from StudentRecognitioner import StudentRecognitioner
+from FaceRecogniser import FaceRecogniser
 
 sr = None
 
@@ -9,7 +9,7 @@ def set_known_folder(folder):
     if folder:
         try:
             global sr
-            sr = StudentRecognitioner(folder)
+            sr = FaceRecogniser(folder)
             if sr:
                 return "Success initializing"
         except Exception as ex:
