@@ -4,6 +4,8 @@ import pyautogui
 import time
 import numpy as np
 import cv2
+import pandas as pd
+from tabulate import tabulate
 
 
 def _get_known_pictures(path):
@@ -192,7 +194,7 @@ class FaceRecogniser:
             face_encodings = fr.face_encodings(unknown_image, face_locations)
 
             face_names_distance_pairs = self._top_n_match(face_encodings)
-            print(face_names_distance_pairs)
+            self._show_distances(face_names_distance_pairs)
             face_names = [pair[0] for pair in face_names_distance_pairs]
 
             if ShowResult:
@@ -204,6 +206,15 @@ class FaceRecogniser:
             return face_names, True
         else:
             return ["No Faces found on picture"], None
+
+    def _show_distances(self, pairs):
+        for i in range(len(pairs)):
+            print()
+            print(f"Face - {pairs[i][0]}")
+            df = pd.DataFrame(pairs[i][1], columns =['%', 'Name'])
+            df = df[['Name', "%"]]
+            df["%"] = 1-df['%']
+            print(tabulate(df, headers='keys', tablefmt='psql', showindex=False, stralign="center", numalign="center"))
 
     def find_by_screenshot(self, screnshot_delay=2, ShowResult=True):
 
@@ -241,7 +252,7 @@ class FaceRecogniser:
 def main():
     path = "known_pictures"
     fr = FaceRecogniser(path)
-    print(fr.find_by_picture("Ronnie_Radke_June_2015_outtake.jpg"))
+    print(fr.find_by_picture("test_pictures/Ronnie_Radke_June_2015_outtake.jpg"))
 
 
 if __name__ == "__main__":
