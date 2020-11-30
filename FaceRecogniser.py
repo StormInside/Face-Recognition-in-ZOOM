@@ -218,6 +218,7 @@ class FaceRecogniser:
 
     def find_by_screenshot(self, screnshot_delay=2, ShowResult=True):
 
+
         if ShowResult:
             screenshot = _take_screenshot(screnshot_delay, save=True)
         else:
@@ -231,7 +232,7 @@ class FaceRecogniser:
             face_encodings = fr.face_encodings(unknown_image, face_locations)
 
             face_names_distance_pairs = self._top_n_match(face_encodings)
-            print(face_names_distance_pairs)
+            self._show_distances(face_names_distance_pairs)
             face_names = [pair[0] for pair in face_names_distance_pairs]
 
             if ShowResult:
